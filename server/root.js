@@ -2,7 +2,6 @@ import FirebaseService from './firebaseService.js';
 import AlphavantageService from './alphavantageService.js';
 const root = {
     //  Query
-    //  Wallet doesnot work)
     getUserInfoById: ({ id }) => {
         return FirebaseService.getUserInfoById(id);
     },
@@ -20,6 +19,9 @@ const root = {
     },
 
     //  Alphavantage
+    getStockTimeSeriesIntraday: ({ coin_name, interval }) => {
+        return AlphavantageService.getStockTimeSeriesIntraday(coin_name, interval);
+    },
     getStockTimeSeriesDaily: ({ coin_name }) => {
         return AlphavantageService.getStockTimeSeriesDaily(coin_name);
     },
@@ -28,6 +30,10 @@ const root = {
     },
     getStockTimeSeriesMonthly: ({ coin_name }) => {
         return AlphavantageService.getStockTimeSeriesMonthly(coin_name);
+    },
+
+    getCryptoTimeSeriesIntraday: ({ coin_name, interval }) => {
+        return AlphavantageService.getCryptoTimeSeriesIntraday(coin_name, interval);
     },
     getCryptoTimeSeriesDaily: ({ coin_name }) => {
         return AlphavantageService.getCryptoTimeSeriesDaily(coin_name);

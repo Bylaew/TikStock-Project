@@ -27,7 +27,7 @@ app.use('/graphql', graphqlHTTP({
 
 async function startServer() {
     try {
-        const qwe = initializeApp(FIREBASE_CONFIG);
+        initializeApp(FIREBASE_CONFIG);
         app.listen(process.env.PORT, () => { console.log('listening on http://localhost:5000'); });
     } catch (e) {
         console.error(e);

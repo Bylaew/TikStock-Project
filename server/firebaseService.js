@@ -34,38 +34,6 @@ class FirebaseService {
         });
     }
 
-    getFollowsByUserId(userId) {
-        const dbRef = ref(getDatabase());
-        let result_follows = [];
-        return get(child(dbRef, `usersInfo/${userId}/followers/`)).then((response) => {
-            if (response.exists()) {
-                for (let key in response.val()) {
-                    result_follows.push(response.val()[key].followId)
-                }
-                return result_follows
-            } else {
-                //  error id
-                return result_follows
-            }
-        });
-    }
-
-    getFollowingsByUserId(userId) {
-        const dbRef = ref(getDatabase());
-        let result_follows = [];
-        return get(child(dbRef, `usersInfo/${userId}/followings/`)).then((response) => {
-            if (response.exists()) {
-                for (let key in response.val()) {
-                    result_follows.push(response.val()[key].followId)
-                }
-                return result_follows
-            } else {
-                //  error id
-                return result_follows
-            }
-        });
-    }
-
     addComment(uId, _coinId, _commentText) {
         const db = getDatabase();
         let commetsRef = ref(db, `comments/`);
@@ -76,6 +44,7 @@ class FirebaseService {
         });
     }
 
+    // TODO: добавляет запись при неверном id
     changeUserPhoto(uId, image) {
         const db = getDatabase();
         let userImageRef = ref(db, `usersInfo/${uId}/image/`);
@@ -114,7 +83,8 @@ class FirebaseService {
         });
     }
 
-    //  Проверка на сушествующий фолов
+    // TODO:  Проверка на сушествующий фолов
+    // TODO:  замена push на update
     addFollow(id, followId) {
         const db = getDatabase();
         const dbRef = ref(db);
@@ -130,12 +100,14 @@ class FirebaseService {
         });
     }
 
+    // TODO:  Проверка на сушествующий фолов
+    // TODO:  замена push на update
     addFollowing(id, followId) {
         const db = getDatabase();
         const dbRef = ref(db);
         let followingsRef = ref(db, `usersInfo/${id}/followingsId/`);
         push(followingsRef, {
-            followingId: followId
+            followId
         });
         get(child(dbRef, `usersInfo/${id}/`)).then((response) => {
             let new_followings = response.val().followings + 1;

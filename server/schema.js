@@ -3,10 +3,12 @@ import { buildSchema } from 'graphql'
 
 
 const schema = buildSchema(`
-
     type UserInfo {
         image: String
-        subs: Int
+        follows: Int
+        followings: Int
+        followsId: [String]
+        followingsId: [String]
         wallet: [Coin]
     }
 
@@ -22,13 +24,13 @@ const schema = buildSchema(`
     }
     
     type AlphavantageData {
-        date: String,
-        open: Float,
-        high: Float,
-        low: Float,
-        close: Float,
-        adjusted_close: Float,
-        volume: Float,
+        date: String
+        open: Float
+        high: Float
+        low: Float
+        close: Float
+        adjusted_close: Float
+        volume: Float
         dividend_amount: Float
     }
 
@@ -61,9 +63,12 @@ const schema = buildSchema(`
         getFollowsByUserId(userId: String): [String]
         getFollowingsByUserId(userId: String): [String]
         
+        getStockTimeSeriesIntraday(coin_name: String, interval: String): [AlphavantageData]
         getStockTimeSeriesDaily(coin_name: String): [AlphavantageData]
         getStockTimeSeriesWeekly(coin_name: String): [AlphavantageData]
         getStockTimeSeriesMonthly(coin_name: String): [AlphavantageData]
+
+        getCryptoTimeSeriesIntraday(coin_name: String, interval: String): [AlphavantageData]
         getCryptoTimeSeriesDaily(coin_name: String): [AlphavantageData]
         getCryptoTimeSeriesWeekly(coin_name: String): [AlphavantageData]
         getCryptoTimeSeriesMonthly(coin_name: String): [AlphavantageData]
@@ -76,9 +81,11 @@ const schema = buildSchema(`
         addComment(input: CommentInput): String
         addFollowing(input: FollowInput): String
         addFollow(input: FollowInput): String
+        
+        deleteFollow(id: String, folowId: String): String
+        deleteFollowing(id: String, folowingId: String): String
     }
 
 `);
-// Написать мутации
 
 export default schema;

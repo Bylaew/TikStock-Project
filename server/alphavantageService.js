@@ -2,6 +2,16 @@ import fetch from "node-fetch";
 
 const API_KEY = process.env.ALPHAVANTAGE_API_KEY
 class AlphavantageService {
+
+    getStockTimeSeriesIntraday(coin_name, interval) {
+        return fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${coin_name}&interval=${interval}min&apikey=${API_KEY}`)
+            .then((response) => {
+                return response.json();
+            }).then((data) => {
+                return Stock_to_GraphQLSchema(data[`Time Series (${interval}min)`]);
+            });
+    }
+
     getStockTimeSeriesDaily(coin_name) {
         return fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${coin_name}&apikey=${API_KEY}`)
             .then((response) => {
@@ -12,6 +22,7 @@ class AlphavantageService {
     }
 
     getStockTimeSeriesWeekly(coin_name) {
+        console.log("API_key " + API_KEY);
         return fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=${coin_name}&apikey=${API_KEY}`)
             .then((response) => {
                 return response.json();
@@ -29,8 +40,16 @@ class AlphavantageService {
             });
     }
 
+    //  Alphavantage
+    getCryptoTimeSeriesIntraday(coin_name, interval) {
+        return fetch(`https://www.alphavantage.co/query?function=CRYPTO_INTRADAY&symbol=${coin_name}&market=USD&interval=${interval}min&apikey=${API_KEY}`)
+            .then((response) => {
+                return response.json();
+            }).then((data) => {
+                return Stock_to_GraphQLSchema(data[`Time Series Crypto (${interval}min)`]); //?
+            });
+    }
 
-    //  market
     getCryptoTimeSeriesDaily(coin_name) {
         return fetch(`https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${coin_name}&market=USD&apikey=${API_KEY}`)
             .then((response) => {
