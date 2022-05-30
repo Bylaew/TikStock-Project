@@ -2,13 +2,12 @@ import fetch from "node-fetch";
 
 const API_KEY = process.env.ALPHAVANTAGE_API_KEY
 class AlphavantageService {
-
     getStockTimeSeriesIntraday(coin_name, interval) {
         return fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${coin_name}&interval=${interval}min&apikey=${API_KEY}`)
             .then((response) => {
                 return response.json();
             }).then((data) => {
-                return Stock_to_GraphQLSchema(data[`Time Series (${interval}min)`]);
+                return convertStockData(data[`Time Series (${interval}min)`]);
             });
     }
 
@@ -17,7 +16,7 @@ class AlphavantageService {
             .then((response) => {
                 return response.json();
             }).then((data) => {
-                return Stock_to_GraphQLSchema(data['Time Series (Daily)']);
+                return convertStockData(data['Time Series (Daily)']);
             });
     }
 
@@ -27,7 +26,7 @@ class AlphavantageService {
             .then((response) => {
                 return response.json();
             }).then((data) => {
-                return Stock_to_GraphQLSchema(data['Weekly Adjusted Time Series']);
+                return convertStockData(data['Weekly Adjusted Time Series']);
             });
     }
 
@@ -36,7 +35,7 @@ class AlphavantageService {
             .then((response) => {
                 return response.json();
             }).then((data) => {
-                return Stock_to_GraphQLSchema(data['Monthly Adjusted Time Series']);
+                return convertStockData(data['Monthly Adjusted Time Series']);
             });
     }
 
@@ -46,7 +45,7 @@ class AlphavantageService {
             .then((response) => {
                 return response.json();
             }).then((data) => {
-                return Stock_to_GraphQLSchema(data[`Time Series Crypto (${interval}min)`]); //?
+                return convertStockData(data[`Time Series Crypto (${interval}min)`]); //?
             });
     }
 
@@ -55,7 +54,7 @@ class AlphavantageService {
             .then((response) => {
                 return response.json();
             }).then((data) => {
-                return Cryptocurrency_to_GraphQLSchema(data['Time Series (Digital Currency Daily)']);
+                return convertCryptoData(data['Time Series (Digital Currency Daily)']);
             });
     }
 
@@ -64,7 +63,7 @@ class AlphavantageService {
             .then((response) => {
                 return response.json();
             }).then((data) => {
-                return Cryptocurrency_to_GraphQLSchema(data['Time Series (Digital Currency Weekly)']);
+                return convertCryptoData(data['Time Series (Digital Currency Weekly)']);
             });
     }
 
@@ -73,12 +72,12 @@ class AlphavantageService {
             .then((response) => {
                 return response.json();
             }).then((data) => {
-                return Cryptocurrency_to_GraphQLSchema(data['Time Series (Digital Currency Monthly)']);
+                return convertCryptoData(data['Time Series (Digital Currency Monthly)']);
             });
     }
 }
 
-function Stock_to_GraphQLSchema(data) {
+function convertStockData(data) {
     const keysValue = Object.keys(data);
     let value = [];
     for (let key in keysValue) {
@@ -97,8 +96,8 @@ function Stock_to_GraphQLSchema(data) {
     return value;
 }
 
-// nerabotaet)
-function Cryptocurrency_to_GraphQLSchema(data) {
+
+function convertCryptoData(data) {
     const keysValue = Object.keys(data);
     let value = [];
     for (let key in keysValue) {

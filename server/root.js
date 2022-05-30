@@ -11,12 +11,6 @@ const root = {
     getCommentsByUserId: ({ userId }) => {
         return FirebaseService.getCommentsByUserId(userId);
     },
-    getFollowsByUserId: ({ userId }) => {
-        return FirebaseService.getFollowsByUserId(userId);
-    },
-    getFollowingsByUserId: ({ userId }) => {
-        return FirebaseService.getFollowingsByUserId(userId);
-    },
 
     //  Alphavantage
     getStockTimeSeriesIntraday: ({ coin_name, interval }) => {

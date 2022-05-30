@@ -1,37 +1,58 @@
 import { getDatabase, ref, get, child, set, update, push } from "firebase/database";
 
 class FirebaseService {
-    getUserInfoById(id) {
+    async getUserInfoById(id) {
         const dbRef = ref(getDatabase());
-        return get(child(dbRef, `usersInfo/${id}`)).then((response) => {
-            return response.val()
-        });
+        const response = await get(child(dbRef, `usersInfo/${id}`));
+        if (!response.exists()) return null;
+
+        let result_response = response.val();
+        if (response.val().followsId != null) {
+            let tmp1 = [];
+            for (let key in response.val().followsId) {
+                tmp1.push(response.val().followId[key].followId);
+            }
+            result_response['followsId'] = tmp1;
+        }
+
+        if (response.val().followingsId != null) {
+            let tmp1_1 = [];
+            for (let key_1 in response.val().followingsId) {
+                tmp1_1.push(response.val().followingsId[key_1].followingId);
+            }
+            result_response['followingsId'] = tmp1_1;
+        }
+
+        if (response.val().wallet != null) {
+            result_response['wallet'] = Object.values(result_response['wallet']);
+        }
+
+        return result_response;
     }
 
-    getCommentsByCoinName(_coin_name) {
+    async getCommentsByCoinName(_coin_name) {
         const dbRef = ref(getDatabase());
         let result_comments = [];
-        return get(child(dbRef, `comments/`)).then((response) => {
-            for (let key in response.val()) {
-                if (response.val()[key].coinId == _coin_name) {
-                    result_comments.push(response.val()[key])
-                }
+        const response = await get(child(dbRef, `comments/`));
+
+        for (let key in response.val()) {
+            if (response.val()[key].coinId == _coin_name) {
+                result_comments.push(response.val()[key]);
             }
-            return result_comments
-        });
+        }
+        return result_comments;
     }
 
-    getCommentsByUserId(_userId) {
+    async getCommentsByUserId(_userId) {
         const dbRef = ref(getDatabase());
         let result_comments = [];
-        return get(child(dbRef, `comments/`)).then((response) => {
-            for (let key in response.val()) {
-                if (response.val()[key].userId == _userId) {
-                    result_comments.push(response.val()[key])
-                }
+        const response = await get(child(dbRef, `comments/`));
+        for (let key in response.val()) {
+            if (response.val()[key].userId == _userId) {
+                result_comments.push(response.val()[key]);
             }
-            return result_comments
-        });
+        }
+        return result_comments;
     }
 
     addComment(uId, _coinId, _commentText) {
@@ -55,8 +76,6 @@ class FirebaseService {
         const db = getDatabase();
         const usersInfoRef = ref(db, `usersInfo/${id}`)
         const newUserInfo = {
-            follows: 0,
-            followings: 0,
             image: "url"
         }
         set(usersInfoRef, newUserInfo);
@@ -83,8 +102,8 @@ class FirebaseService {
         });
     }
 
+    // TODO: добавляет запись при неверном id
     // TODO:  Проверка на сушествующий фолов
-    // TODO:  замена push на update
     addFollow(id, followId) {
         const db = getDatabase();
         const dbRef = ref(db);
@@ -92,28 +111,16 @@ class FirebaseService {
         push(followersRef, {
             followId: followId
         });
-        get(child(dbRef, `usersInfo/${id}/`)).then((response) => {
-            let new_follows = response.val().follows + 1;
-            update(ref(db, `usersInfo/${id}/`), {
-                follows: new_follows
-            });
-        });
     }
 
+    // TODO: добавляет запись при неверном id
     // TODO:  Проверка на сушествующий фолов
-    // TODO:  замена push на update
-    addFollowing(id, followId) {
+    addFollowing(id, followingId) {
         const db = getDatabase();
         const dbRef = ref(db);
-        let followingsRef = ref(db, `usersInfo/${id}/followingsId/`);
+        const followingsRef = ref(db, `usersInfo/${id}/followingsId/`);
         push(followingsRef, {
-            followId
-        });
-        get(child(dbRef, `usersInfo/${id}/`)).then((response) => {
-            let new_followings = response.val().followings + 1;
-            update(ref(db, `usersInfo/${id}/`), {
-                followings: new_followings
-            });
+            followingId
         });
     }
 }

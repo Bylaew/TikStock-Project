@@ -1,12 +1,8 @@
 import { buildSchema } from 'graphql'
 
-
-
 const schema = buildSchema(`
     type UserInfo {
         image: String
-        follows: Int
-        followings: Int
         followsId: [String]
         followingsId: [String]
         wallet: [Coin]
@@ -60,8 +56,6 @@ const schema = buildSchema(`
         getUserInfoById(id: ID): UserInfo
         getCommentsByCoinName(coinId: String): [Comment]
         getCommentsByUserId(userId: String): [Comment]
-        getFollowsByUserId(userId: String): [String]
-        getFollowingsByUserId(userId: String): [String]
         
         getStockTimeSeriesIntraday(coin_name: String, interval: String): [AlphavantageData]
         getStockTimeSeriesDaily(coin_name: String): [AlphavantageData]

@@ -4,8 +4,8 @@ import schema from './schema.js';
 import root from './root.js';
 import { initializeApp } from 'firebase/app';
 import { config } from 'dotenv';
-config();
 
+config();
 const FIREBASE_CONFIG = {
     apiKey: process.env.FirebaseApiKey,
     authDomain: process.env.FirebaseAuthDomain,
