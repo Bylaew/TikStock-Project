@@ -2,8 +2,8 @@ import FirebaseService from './firebaseService.js';
 import AlphavantageService from './alphavantageService.js';
 const root = {
     //  Query
-    getUserInfoById: ({ id }) => {
-        return FirebaseService.getUserInfoById(id);
+    getUserInfoById: ({ userId }) => {
+        return FirebaseService.getUserInfoById(userId);
     },
     getCommentsByCoinName: ({ coinId }) => {
         return FirebaseService.getCommentsByCoinName(coinId);
@@ -41,28 +41,22 @@ const root = {
 
     //  mutations
     addComment: ({ input }) => {
-        FirebaseService.addComment(input.userId, input.coinId, input.text);
-        return "es";
+        return FirebaseService.addComment(input.userId, input.coinId, input.text);
     },
-    createUserInfo: ({ id }) => {
-        FirebaseService.createUserInfo(id);
-        return "es";
+    createUserInfo: ({ userId }) => {
+        return FirebaseService.createUserInfo(userId);
     },
     editUserWallet: ({ input }) => {
-        FirebaseService.editUserWallet(input.id, input.coin_name, input.count);
-        return "es";
+        return FirebaseService.editUserWallet(input.userId, input.coin_name, input.count);
     },
     addFollow: ({ input }) => {
-        FirebaseService.addFollow(input.userId, input.followId);
-        return "es";
+        return FirebaseService.addFollow(input.userId, input.followId);
     },
     addFollowing: ({ input }) => {
-        FirebaseService.addFollowing(input.userId, input.followId);
-        return "es";
+        return FirebaseService.addFollowing(input.userId, input.followId);
     },
     changeUserPhoto: ({ input }) => {
-        FirebaseService.changeUserPhoto(input.userId, input.image);
-        return "es";
+        return FirebaseService.changeUserPhoto(input.userId, input.image);
     }
 }
 export default root;

@@ -10,7 +10,7 @@ class FirebaseService {
         if (response.val().followsId != null) {
             let tmp1 = [];
             for (let key in response.val().followsId) {
-                tmp1.push(response.val().followId[key].followId);
+                tmp1.push(response.val().followsId[key].followId);
             }
             result_response['followsId'] = tmp1;
         }
@@ -55,7 +55,9 @@ class FirebaseService {
         return result_comments;
     }
 
-    addComment(uId, _coinId, _commentText) {
+    async addComment(uId, _coinId, _commentText) {
+        if (!(await isIdExist(uId))) return "Status 400. Error: User Id does not exist";
+
         const db = getDatabase();
         let commetsRef = ref(db, `comments/`);
         push(commetsRef, {
@@ -63,66 +65,87 @@ class FirebaseService {
             coinId: _coinId,
             text: _commentText
         });
+        return "Status: 200 OK";
+
     }
 
     // TODO: добавляет запись при неверном id
-    changeUserPhoto(uId, image) {
+    async changeUserPhoto(uId, image) {
+        if (!(await isIdExist(uId))) return "Status 400. Error: User Id does not exist";
+
         const db = getDatabase();
         let userImageRef = ref(db, `usersInfo/${uId}/image/`);
         set(userImageRef, image);
+        return "Status: 200 OK";
     }
 
-    createUserInfo(id) {
+    async createUserInfo(uId) {
+        if (await isIdExist(uId)) {
+            return "Status 400. Error: User Id already exists";
+        }
+
         const db = getDatabase();
-        const usersInfoRef = ref(db, `usersInfo/${id}`)
+        const usersInfoRef = ref(db, `usersInfo/${uId}`)
         const newUserInfo = {
-            image: "url"
+            image: "url",
         }
         set(usersInfoRef, newUserInfo);
+        return "Status: 200 OK";
     }
 
-    editUserWallet(id, coin_name, _count) {
+    async editUserWallet(uId, coin_name, _count) {
+        if (!(await isIdExist(uId))) return "Status 400. Error: User Id does not exist";
+
         const db = getDatabase();
         const dbRef = ref(db);
-        get(child(dbRef, `usersInfo/${id}/wallet/`)).then((response) => {
+        get(child(dbRef, `usersInfo/${uId}/wallet/`)).then((response) => {
             if (response.exists()) {
                 for (let key in response.val()) {
                     if (response.val()[key].coin_name == coin_name) {
-                        update(ref(db, `usersInfo/${id}/wallet/` + key), {
+                        update(ref(db, `usersInfo/${uId}/wallet/` + key), {
                             count: _count
                         });
-                        return
+                        return "Status: 200 OK";
                     }
                 }
             }
-            push(ref(db, `usersInfo/${id}/wallet/`), {
+            push(ref(db, `usersInfo/${uId}/wallet/`), {
                 coin_name: coin_name,
                 count: _count
             });
         });
+        return "Status: 200 OK";
     }
 
-    // TODO: добавляет запись при неверном id
-    // TODO:  Проверка на сушествующий фолов
-    addFollow(id, followId) {
+    async addFollow(uId, followId) {
+        if (!(await isIdExist(uId))) return "Status 400. Error: User Id does not exist";
+        if (!(await isIdExist(followId))) return "Status 400. Error: Follow Id does not exist";
+
         const db = getDatabase();
-        const dbRef = ref(db);
-        let followersRef = ref(db, `usersInfo/${id}/followsId/`);
+        let followersRef = ref(db, `usersInfo/${uId}/followsId/`);
         push(followersRef, {
             followId: followId
         });
+        return "Status: 200 OK";
     }
 
-    // TODO: добавляет запись при неверном id
-    // TODO:  Проверка на сушествующий фолов
-    addFollowing(id, followingId) {
+    async addFollowing(uId, followingId) {
+        if (!(await isIdExist(uId))) return "Status 400. Error: User Id does not exists";
+        if (!(await isIdExist(followingId))) return "Status 400. Error: Following Id does not exists";
+
         const db = getDatabase();
-        const dbRef = ref(db);
-        const followingsRef = ref(db, `usersInfo/${id}/followingsId/`);
+        const followingsRef = ref(db, `usersInfo/${uId}/followingsId/`);
         push(followingsRef, {
             followingId
         });
+        return "Status: 200 OK";
     }
+}
+
+async function isIdExist(id) {
+    const dbRef = ref(getDatabase());
+    const response = await get(child(dbRef, `usersInfo/${id}`));
+    return response.exists();
 }
 
 export default new FirebaseService();

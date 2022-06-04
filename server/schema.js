@@ -36,7 +36,7 @@ const schema = buildSchema(`
     }
 
     input CoinInput {
-        id: String!
+        userId: String!
         coin_name: String!
         count: Int!
     }
@@ -53,7 +53,7 @@ const schema = buildSchema(`
     }
 
     type Query {
-        getUserInfoById(id: ID): UserInfo
+        getUserInfoById(userId: String): UserInfo
         getCommentsByCoinName(coinId: String): [Comment]
         getCommentsByUserId(userId: String): [Comment]
         
@@ -69,15 +69,12 @@ const schema = buildSchema(`
     }
 
     type Mutation {
-        createUserInfo(id: ID): String
+        createUserInfo(userId: String): String
         changeUserPhoto(input: UserImageInput): String
         editUserWallet(input: CoinInput): String
         addComment(input: CommentInput): String
         addFollowing(input: FollowInput): String
         addFollow(input: FollowInput): String
-        
-        deleteFollow(id: String, folowId: String): String
-        deleteFollowing(id: String, folowingId: String): String
     }
 
 `);
